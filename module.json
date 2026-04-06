@@ -1,27 +1,24 @@
 {
    "id": "pf2e-aztecs-inline-builder",
    "title": "PF2e Aztec's Inline Builder",
-   "description": "A neat, compact UI to build PF2e inline rolls and inject them directly into your cursor position.",
-   "version": "1.0.0",
+   "description": "A dynamic interface for generating and inserting inline PF2e rolls, checks, and damage.",
+   "version": "#{VERSION}#",
+   "compatibility": {
+      "minimum": "13",
+      "verified": "13"
+   },
    "authors": [
       {
          "name": "Aztec"
       }
    ],
-   "compatibility": {
-      "minimum": "12",
-      "verified": "13"
-   },
-   "relationships": {
-      "systems": [
-         {
-            "id": "pf2e",
-            "type": "system",
-            "compatibility": {}
-         }
-      ]
-   },
-   "esmodules": ["src/main.js"],
+   "systems": [
+      {
+         "id": "pf2e",
+         "type": "system"
+      }
+   ],
+   "esmodules": ["scripts/main.js"],
    "styles": ["styles/styles.css"],
    "languages": [
       {
@@ -37,7 +34,10 @@
       {
          "lang": "uk",
          "name": "Українська",
-         "path": "languages/ua.json"
+         "path": "languages/uk.json"
       }
-   ]
+   ],
+   "url": "#{URL}#",
+   "manifest": "#{MANIFEST}#",
+   "download": "#{DOWNLOAD}#"
 }
