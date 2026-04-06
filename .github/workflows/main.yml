@@ -115,7 +115,7 @@ jobs:
                 LICENSE                              \
                 CHANGELOG.md                         \
                 templates                            \
-                scripts/                             \
+                src/                                 \
                 styles/                              \
                 packs/                               \
                 languages/                           \
