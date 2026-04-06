@@ -28,4 +28,4 @@ Client-side settings allow you to customize the workflow:
 ## Installation
 In Foundry VTT, go to the **Add-on Modules** tab, click **Install Module**, and paste the following into the **Manifest URL** field:
 ```text
-[https://github.com/Tebesski/pf2e-aztecs-inline-builder/releases/latest/download/module.json](https://github.com/Tebesski/pf2e-aztecs-inline-builder/releases/latest/download/module.json)
+https://github.com/Tebesski/pf2e-aztecs-inline-builder/releases/latest/download/module.json
