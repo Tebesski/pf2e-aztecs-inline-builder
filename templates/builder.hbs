@@ -1,0 +1,271 @@
+<form class="pf2e-aztecs-builder-container" autocomplete="off" 
+      data-type="{{type}}" data-dc-mode="{{dcMode}}" data-has-lore="{{hasLore}}" 
+      data-shape="{{shape}}" data-level-dc="{{isLevelDC}}" data-resolve="{{isResolve}}">
+    
+    <div class="form-group">
+        <label>{{localize "PF2E-AZTECS.Labels.Type"}}</label>
+        <select name="type">
+            <option value="Check" {{#if (eq type "Check")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.SkillCheck"}}</option>
+            <option value="Save" {{#if (eq type "Save")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.SavingThrow"}}</option>
+            <option value="Flat" {{#if (eq type "Flat")}}selected{{/if}}>Flat Check</option>
+            <option value="Damage" {{#if (eq type "Damage")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Damage"}} Roll</option>
+            <option value="Template" {{#if (eq type "Template")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Template"}}</option>
+            <option value="Roll" {{#if (eq type "Roll")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Roll"}}</option>
+            <option value="Action" {{#if (eq type "Action")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Action"}}</option>
+            <option value="Condition" {{#if (eq type "Condition")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Condition"}}</option>
+        </select>
+    </div>
+
+    <div class="dynamic-fields">
+        <div class="show-check-save">
+            <div class="show-skill-only">
+                {{#each checkKeysMapped}}
+                <div class="form-group">
+                    <label>{{#if @first}}{{localize "PF2E-AZTECS.Labels.Skill"}}{{/if}}</label>
+                    <div class="hybrid-input-group">
+                        <select name="checkKeys.{{this.index}}">
+                            {{#each ../skills}}<option value="{{this.key}}" {{#if (eq ../this.value this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                            <option value="lore" {{#if (eq this.value "lore")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.LoreCustom"}}</option>
+                        </select>
+                        {{#if this.canRemove}}
+                        <button type="button" class="remove-btn" data-action="removeCheckKey" data-index="{{this.index}}"><i class="fas fa-trash"></i></button>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/each}}
+                <button type="button" data-action="addCheckKey" class="add-btn"><i class="fas fa-plus"></i> {{localize "PF2E-AZTECS.Labels.AddSkill"}}</button>
+            </div>
+            
+            <div class="show-save-only">
+                {{#each saveKeysMapped}}
+                <div class="form-group">
+                    <label>{{#if @first}}{{localize "PF2E-AZTECS.Labels.Save"}}{{/if}}</label>
+                    <div class="hybrid-input-group">
+                        <select name="saveKeys.{{this.index}}">
+                            {{#each ../saves}}<option value="{{this.key}}" {{#if (eq ../this.value this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                        </select>
+                        {{#if this.canRemove}}
+                        <button type="button" class="remove-btn" data-action="removeSaveKey" data-index="{{this.index}}"><i class="fas fa-trash"></i></button>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/each}}
+                <button type="button" data-action="addSaveKey" class="add-btn"><i class="fas fa-plus"></i> {{localize "PF2E-AZTECS.Labels.AddSave"}}</button>
+            </div>
+           
+            <div class="show-lore form-group">
+                <label>{{localize "PF2E-AZTECS.Labels.LoreName"}}</label>
+                <input type="text" name="loreName" value="{{loreName}}" placeholder="{{localize 'PF2E-AZTECS.Labels.LorePlaceholder'}}">
+            </div>
+        </div>
+
+        <div class="show-check-save-flat">
+            <hr class="show-not-flat">
+            <div class="form-group show-not-flat">
+                <label>
+                    DC Mode
+                    <i class="fas fa-info-circle show-against" data-tooltip="Use this when the difficulty comes from your powers. Choose this for Spells or Class Actions where you force an enemy to roll a save. The DC is calculated from the statistics of the Origin (the person who owns the item or button). <br><i>Example: You cast Fireball. The enemies roll a Reflex save Against your Spell DC.</i>"></i>
+                    <i class="fas fa-info-circle show-defense" data-tooltip="Use this when you are rolling to overcome an enemy's protection. The DC is pulled from the statistics of your targeted token. <br><i>Example: You use Stealth to hide. You roll a check against the enemy's Perception Defense (their Perception DC).</i>"></i>
+                </label>
+                <select name="dcMode">
+                    <option value="dc" {{#if (eq dcMode "dc")}}selected{{/if}}>Fixed/Level DC</option>
+                    <option value="against" {{#if (eq dcMode "against")}}selected{{/if}}>Against (Origin Stat)</option>
+                    <option value="defense" {{#if (eq dcMode "defense")}}selected{{/if}}>Defense (Target Stat)</option>
+                </select>
+            </div>
+
+            <div class="show-dc">
+                <div class="form-group show-not-flat">
+                    <label>{{localize "PF2E-AZTECS.Labels.LevelDC"}} <i class="fas fa-info-circle" data-tooltip="Uses the Level-Based DC table for the actor making the roll (@self-level)."></i></label>
+                    <input type="checkbox" name="isLevelDC" {{#if isLevelDC}}checked{{/if}}>
+                </div>
+                <div class="show-fixed-dc form-group">
+                    <label>DC Value</label>
+                    <input type="text" name="dc" value="{{dc}}" placeholder="{{#if isResolve}}@actor.attributes.classDC.value{{else}}20{{/if}}">
+                </div>
+            </div>
+
+            <div class="show-against-input form-group">
+                <label>Origin Stat</label>
+                <div class="hybrid-input-group">
+                    <select name="againstType">
+                        <option value="">Custom...</option>
+                        {{#each allStats}}<option value="{{this.key}}" {{#if (eq ../againstType this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                    </select>
+                    <b>OR</b>
+                    <input type="text" name="against" value="{{against}}" placeholder="Manual">
+                </div>
+            </div>
+
+            <div class="show-defense-input form-group">
+                <label>Target Stat</label>
+                <div class="hybrid-input-group">
+                    <select name="defenseType">
+                        <option value="">Custom...</option>
+                        {{#each allStats}}<option value="{{this.key}}" {{#if (eq ../defenseType this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                    </select>
+                    <b>OR</b>
+                    <input type="text" name="defense" value="{{defense}}" placeholder="Manual">
+                </div>
+            </div>
+
+            <div class="form-group show-not-flat">
+                <label>Adjustment <i class="fas fa-info-circle" data-tooltip="Standard PF2e difficulty modifiers. Choosing a preset disables the custom input."></i></label>
+                <div class="hybrid-input-group">
+                    <select name="adjustmentType">
+                        <option value="">None</option>
+                        <option value="-5" {{#if (eq adjustmentType "-5")}}selected{{/if}}>Very Easy (-5)</option>
+                        <option value="-2" {{#if (eq adjustmentType "-2")}}selected{{/if}}>Easy (-2)</option>
+                        <option value="2" {{#if (eq adjustmentType "2")}}selected{{/if}}>Hard (+2)</option>
+                        <option value="5" {{#if (eq adjustmentType "5")}}selected{{/if}}>Very Hard (+5)</option>
+                    </select>
+                    <b>OR</b>
+                    <input type="number" name="adjustment" value="{{adjustment}}" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="form-group show-not-flat">
+                <label>Show DC <i class="fas fa-info-circle" data-tooltip="Determines who sees the DC number in chat results."></i></label>
+                <select name="showDC">
+                    <option value="owner" {{#if (eq showDC "owner")}}selected{{/if}}>Owner Only</option>
+                    <option value="gm" {{#if (eq showDC "gm")}}selected{{/if}}>GM Only</option>
+                    <option value="all" {{#if (eq showDC "all")}}selected{{/if}}>All Players</option>
+                    <option value="none" {{#if (eq showDC "none")}}selected{{/if}}>No One (None)</option>
+                </select>
+            </div>
+
+            <div class="form-group show-not-flat"><label>Secret Roll</label><input type="checkbox" name="isSecret" {{#if isSecret}}checked{{/if}}></div>
+            <div class="form-group show-save-only"><label>{{localize "PF2E-AZTECS.Labels.BasicSave"}} <i class="fas fa-info-circle" data-tooltip="Applies standard spell damage scaling based on the degree of success."></i></label><input type="checkbox" name="basicSave" {{#if basicSave}}checked{{/if}}></div>
+
+<details class="advanced-options show-not-flat">
+                <summary>Advanced options</summary>
+                <div class="advanced-content">
+                    <div class="form-group">
+                        <label>Chat Card Name <i class="fas fa-info-circle" data-tooltip="Overrides the title of the resulting chat card when rolled."></i></label>
+                        <input type="text" name="chatCardName" value="{{chatCardName}}" placeholder="e.g. Poison Save">
+                    </div>
+                    <div class="form-group"><label>Resolve Data <i class="fas fa-info-circle" data-tooltip="Wraps the DC value in resolve(). Use this for dynamic actor data like @actor.attributes.classDC.value."></i></label><input type="checkbox" name="isResolve" {{#if isResolve}}checked{{/if}}></div>
+                    <div class="form-group">
+                        <label>Roller Role <i class="fas fa-info-circle" data-tooltip="Determines who is rolling. Default: User rolls Checks, Target rolls Saves. Change this to reverse who is rolling."></i></label>
+                        <select name="rollerRole">
+                            <option value="" {{#if (eq rollerRole "")}}selected{{/if}}>Default</option>
+                            <option value="origin" {{#if (eq rollerRole "origin")}}selected{{/if}}>Origin</option>
+                            <option value="target" {{#if (eq rollerRole "target")}}selected{{/if}}>Target</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Immutable DC <i class="fas fa-info-circle" data-tooltip="The DC is static and will not be changed by modifiers like frightened, elite, or weak."></i></label><input type="checkbox" name="immutable" {{#if immutable}}checked{{/if}}></div>
+                    <div class="form-group"><label>Override Traits <i class="fas fa-info-circle" data-tooltip="The roll traits will omit the traits from the parent item."></i></label><input type="checkbox" name="overrideTraits" {{#if overrideTraits}}checked{{/if}}></div>
+                </div>
+            </details>
+        </div>
+
+        <div class="show-damage">
+            <hr>
+            <div class="damage-builder-header"><span class="col-formula">Dice / Fixed Formula</span><span class="col-type">Type</span><span class="col-cat">Category</span></div>
+            {{#each damagePoolsMapped}}
+            <div class="form-group damage-row">
+                <div class="formula-split"><input type="number" name="damagePools.{{this.index}}.diceCount" value="{{this.diceCount}}" placeholder="2"><span class="dice-sep">d</span><input type="number" name="damagePools.{{this.index}}.diceFaces" value="{{this.diceFaces}}" placeholder="6"><span class="dice-sep">+</span><input type="number" name="damagePools.{{this.index}}.fixedValue" value="{{this.fixedValue}}" placeholder="4"></div>
+                <select name="damagePools.{{this.index}}.type" class="damage-type-select">{{#each ../damageTypes}}<option value="{{@key}}" {{#if (eq ../this.type @key)}}selected{{/if}}>{{localize this}}</option>{{/each}}</select>
+                <select name="damagePools.{{this.index}}.category" class="damage-cat-select"><option value="">None</option><option value="precision" {{#if (eq this.category "precision")}}selected{{/if}}>Precision</option><option value="persistent" {{#if (eq this.category "persistent")}}selected{{/if}}>Persistent</option><option value="splash" {{#if (eq this.category "splash")}}selected{{/if}}>Splash</option></select>
+                {{#if this.canRemove}}
+                <button type="button" class="remove-btn" data-action="removeDamage" data-index="{{this.index}}"><i class="fas fa-trash"></i></button>
+                {{/if}}
+            </div>
+            {{/each}}
+            <button type="button" data-action="addDamage" class="add-btn"><i class="fas fa-plus"></i> Add Damage Pool</button>
+            <div class="form-group"><label>Materials</label><input type="text" name="materials" value="{{materials}}" placeholder="e.g. silver, cold-iron"></div>
+        </div>
+
+        <div class="show-template">
+            <hr>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.Shape"}}</label><select name="shape"><option value="burst" {{#if (eq shape "burst")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Burst"}}</option><option value="cone" {{#if (eq shape "cone")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Cone"}}</option><option value="emanation" {{#if (eq shape "emanation")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Emanation"}}</option><option value="line" {{#if (eq shape "line")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Line"}}</option></select></div>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.Distance"}}</label><input type="number" name="distance" value="{{distance}}"></div>
+            <div class="show-width-input form-group"><label>{{localize "PF2E-AZTECS.Labels.Width"}}</label><input type="number" name="width" value="{{width}}"></div>
+        </div>
+
+        <div class="show-roll">
+            <hr>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.RollFormula"}}</label><input type="text" name="rollFormula" value="{{rollFormula}}" placeholder="1d4"></div>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.RollFlavor"}}</label><input type="text" name="rollFlavor" value="{{rollFlavor}}" placeholder="Recharge Breath Weapon"></div>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.RollLabel"}}</label><input type="text" name="customLabel" value="{{customLabel}}" placeholder="1d4 rounds"></div>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.GMRoll"}}</label><input type="checkbox" name="isGM" {{#if isGM}}checked{{/if}}></div>
+        </div>
+
+        <div class="show-action">
+            <hr>
+            <div class="form-group">
+                <label>{{localize "PF2E-AZTECS.Labels.ActionSlug"}}</label>
+                <select name="actionSlug">
+                    {{#each actions}}<option value="{{this.key}}" {{#if (eq ../actionSlug this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>{{localize "PF2E-AZTECS.Labels.Variant"}}</label>
+                {{#if currentVariants.length}}
+                <div class="hybrid-input-group">
+                    <select name="actionVariantType">
+                        <option value="">None</option>
+                        {{#each currentVariants}}<option value="{{this.key}}" {{#if (eq ../actionVariantType this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                    </select>
+                    <b>OR</b>
+                    <input type="text" name="actionVariant" value="{{actionVariant}}" placeholder="stop-bleeding">
+                </div>
+                {{else}}
+                <input type="text" name="actionVariant" value="{{actionVariant}}" placeholder="stop-bleeding">
+                {{/if}}
+            </div>
+
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.FixedDC"}}</label><input type="text" name="actionDC" value="{{actionDC}}" placeholder="20"></div>
+            
+            <div class="form-group">
+                <label>{{localize "PF2E-AZTECS.Labels.Statistic"}}</label>
+                <div class="hybrid-input-group">
+                    <select name="actionStatType">
+                        <option value="">Custom...</option>
+                        <optgroup label="Skills">
+                            {{#each skills}}<option value="{{this.key}}" {{#if (eq ../actionStatType this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                        </optgroup>
+                        <optgroup label="Saves & Other">
+                            {{#each actionStatsOther}}<option value="{{this.key}}" {{#if (eq ../actionStatType this.key)}}selected{{/if}}>{{this.label}}</option>{{/each}}
+                        </optgroup>
+                    </select>
+                    <b>OR</b>
+                    <input type="text" name="actionStat" value="{{actionStat}}" placeholder="thievery">
+                </div>
+            </div>
+        </div>
+
+        <div class="show-condition">
+            <hr>
+            <div class="form-group">
+                <label>{{localize "PF2E-AZTECS.Labels.Condition"}}</label>
+                {{#if selectedCondition}}
+                    <img src="{{selectedCondition.img}}" width="24" height="24" style="border:none; margin-right: 5px; border-radius: 3px;">
+                {{/if}}
+                <select name="conditionId">
+                    {{#each conditions}}<option value="{{this.id}}" {{#if (eq ../conditionId this.id)}}selected{{/if}}>{{this.name}}</option>{{/each}}
+                </select>
+            </div>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.ConditionValue"}}</label><input type="number" name="conditionValue" value="{{conditionValue}}" placeholder="1"></div>
+        </div>
+
+        <div class="show-not-flat">
+            <hr>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.Traits"}} <i class="fas fa-info-circle" data-tooltip="Comma-separated PF2e traits (e.g., fire, mental)."></i></label><input type="text" name="traits" value="{{traits}}" placeholder="fire, mental"></div>
+            <div class="form-group"><label>Options <i class="fas fa-info-circle" data-tooltip="Internal roll options for automation (e.g., area-damage)."></i></label><input type="text" name="options" value="{{options}}" placeholder="area-damage"></div>
+        </div>
+
+        <div class="show-custom-label">
+            <hr>
+            <div class="form-group"><label>{{localize "PF2E-AZTECS.Labels.CustomLabel"}}</label><input type="text" name="customLabel" value="{{customLabel}}" placeholder="{{localize 'PF2E-AZTECS.Labels.CustomLabelPlaceholder'}}"></div>
+        </div>
+        
+        <div class="form-group output-group"><textarea name="preview" readonly rows="3">{{preview}}</textarea></div>
+    </div>
+
+    <div class="form-actions">
+        <button type="button" data-action="insert"><i class="fa-solid fa-file-import"></i> {{localize "PF2E-AZTECS.Labels.Insert"}}</button>
+        <button type="button" data-action="copy"><i class="fa-solid fa-copy"></i> {{localize "PF2E-AZTECS.Labels.Copy"}}</button>
+    </div>
+</form>

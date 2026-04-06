@@ -1,0 +1,73 @@
+{
+   "PF2E-AZTECS": {
+      "Title": "Aztec's Inline Links builder",
+      "Keybinding": "Open Inline Links builder",
+      "KeybindingHint": "Summons the  UI to build PF2e Inline Links.",
+      "Notifications": {
+         "Copied": "Copied inline syntax to clipboard.",
+         "Inserted": "Syntax inserted.",
+         "NoTextField": "No text field active. Copied instead.",
+         "Unsupported": "Target unsupported. Copied instead.",
+         "InsertedAndCopied": "Syntax inserted and copied to clipboard."
+      },
+      "Labels": {
+         "Type": "Type",
+         "SkillCheck": "Skill Check",
+         "SavingThrow": "Saving Throw",
+         "Damage": "Damage",
+         "Template": "Template",
+         "Save": "Save",
+         "BasicSave": "Basic Save",
+         "Skill": "Skill",
+         "LoreCustom": "Lore (Custom)",
+         "LoreName": "Lore Name",
+         "LorePlaceholder": "e.g. vampire",
+         "LevelDC": "Level-Based DC",
+         "FixedDC": "Fixed DC",
+         "Optional": "Optional",
+         "Traits": "Traits",
+         "TraitsPlaceholder": "secret, manipulate",
+         "Formula": "Formula",
+         "Untyped": "Untyped",
+         "Shape": "Shape",
+         "Burst": "Burst",
+         "Cone": "Cone",
+         "Emanation": "Emanation",
+         "Line": "Line",
+         "Distance": "Distance",
+         "Width": "Width",
+         "WidthPlaceholder": "Default is 5",
+         "CustomLabel": "Custom label",
+         "CustomLabelPlaceholder": "{Custom label}",
+         "Insert": "Insert",
+         "Copy": "Copy",
+         "Roll": "Generic roll",
+         "Action": "Actions",
+         "Condition": "Condition link",
+         "RollFormula": "Roll formula",
+         "RollFlavor": "Flavour text",
+         "RollLabel": "Custom label",
+         "GMRoll": "Hide from Players (GM roll)",
+         "ActionSlug": "System action",
+         "Variant": "Variant",
+         "Statistic": "Statistic",
+         "AddSkill": "Add Skill",
+         "AddSave": "Add Save",
+         "ConditionValue": "Condition value/level"
+      },
+      "Settings": {
+         "AutoCopyOnInsert": {
+            "Name": "Auto-copy on insert",
+            "Hint": "Automatically copy the generated syntax to your clipboard whenever you insert it into a text field."
+         },
+         "CloseOnInsert": {
+            "Name": "Close window on insert",
+            "Hint": "Automatically close the builder UI after successfully inserting the syntax."
+         },
+         "CloseOnCopy": {
+            "Name": "Close window on copy",
+            "Hint": "Automatically close the builder UI after manually copying the syntax."
+         }
+      }
+   }
+}
