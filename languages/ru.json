@@ -53,7 +53,8 @@
          "Statistic": "Статистика",
          "AddSkill": "Добавить навык",
          "AddSave": "Добавить спасбросок",
-         "ConditionValue": "Значение/Уровень состояния"
+         "ConditionValue": "Значение/Уровень состояния",
+         "Adjustment": "Коррекция"
       },
       "Settings": {
          "AutoCopyOnInsert": {

@@ -219,8 +219,7 @@ form[data-type="Flat"] .show-not-flat,
 form[data-type="Roll"] .show-not-flat,
 form[data-type="Action"] .show-not-flat,
 form[data-type="Condition"] .show-not-flat,
-form[data-type="Template"] .show-not-flat,
-form[data-type="Damage"] .show-not-flat {
+form[data-type="Template"] .show-not-flat {
    display: none !important;
 }
 

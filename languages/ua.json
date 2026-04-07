@@ -53,7 +53,8 @@
          "Statistic": "Статистика",
          "AddSkill": "Додати навичку",
          "AddSave": "Додати рятівний кидок",
-         "ConditionValue": "Значення/Рівень стану"
+         "ConditionValue": "Значення/Рівень стану",
+         "Adjustment": "Корекція"
       },
       "Settings": {
          "AutoCopyOnInsert": {

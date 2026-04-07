@@ -32,7 +32,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       },
    ]
 
-   /* Default Configuration */
    static DEFAULT_OPTIONS = {
       id: "pf2e-aztecs-inline-builder",
       classes: ["pf2e-inline-builder"],
@@ -43,14 +42,14 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
          minimizable: true,
       },
       actions: {
-         copy: PF2eInlineBuilderUI.onCopy,
-         insert: PF2eInlineBuilderUI.onInsert,
-         addDamage: PF2eInlineBuilderUI.onAddDamageRow,
-         removeDamage: PF2eInlineBuilderUI.onRemoveDamageRow,
-         addCheckKey: PF2eInlineBuilderUI.onAddCheckKey,
-         removeCheckKey: PF2eInlineBuilderUI.onRemoveCheckKey,
-         addSaveKey: PF2eInlineBuilderUI.onAddSaveKey,
-         removeSaveKey: PF2eInlineBuilderUI.onRemoveSaveKey,
+         copy: this.onCopy,
+         insert: this.onInsert,
+         addDamage: this.onAddDamageRow,
+         removeDamage: this.onRemoveDamageRow,
+         addCheckKey: this.onAddCheckKey,
+         removeCheckKey: this.onRemoveCheckKey,
+         addSaveKey: this.onAddSaveKey,
+         removeSaveKey: this.onRemoveSaveKey,
       },
    }
 
@@ -60,16 +59,17 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       },
    }
 
-   /* Constructor */
    constructor(options = {}) {
+      options.position = options.position || {}
+      options.position.top = options.position.top ?? 15
+      options.position.left = options.position.left ?? window.innerWidth - 495
+
       super(options)
 
-      // Initialize tracking variables
       this.targetElement = null
       this.savedSelection = null
       this.savedRange = null
 
-      // Capture initial target and bind live tracking
       this.#captureTarget(options.targetElement || document.activeElement)
       this._selectionListener = this.#onSelectionChange.bind(this)
       document.addEventListener("selectionchange", this._selectionListener)
@@ -105,7 +105,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       this.formData = this.#getDefaultData()
    }
 
-   /* Cursor Tracking Methods */
    #captureTarget(target) {
       if (!target) return
       const isInput =
@@ -114,7 +113,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
          target.isContentEditable
       if (!isInput) return
 
-      // Ignore UI elements from our own builder window
       if (target.closest && target.closest(".pf2e-inline-builder")) return
 
       this.targetElement = target
@@ -134,7 +132,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
          const sel = window.getSelection()
          if (sel.rangeCount > 0) {
             const range = sel.getRangeAt(0)
-            // Ensure we only save the range if it's actually inside the target editor
             if (target.contains(range.commonAncestorContainer)) {
                this.savedRange = range.cloneRange()
             }
@@ -146,18 +143,20 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       this.#captureTarget(document.activeElement)
    }
 
-   /* Cleanup */
    async close(options) {
       document.removeEventListener("selectionchange", this._selectionListener)
       return super.close(options)
    }
-   /* ======= */
 
    #getDefaultData() {
       return {
          type: "Check",
          checkKeys: ["athletics"],
+         checkAdjTypes: [""],
+         checkAdjValues: [""],
          saveKeys: ["fortitude"],
+         saveAdjTypes: [""],
+         saveAdjValues: [""],
          dcMode: "dc",
          dc: "20",
          againstType: "class-spell",
@@ -166,8 +165,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
          defense: "",
          isLevelDC: false,
          isResolve: false,
-         adjustmentType: "",
-         adjustment: "",
          showDC: "owner",
          rollerRole: "",
          basicSave: false,
@@ -236,11 +233,15 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       const checkKeysMapped = this.formData.checkKeys.map((val, idx) => ({
          value: val,
          index: idx,
+         adjType: this.formData.checkAdjTypes[idx] || "",
+         adjValue: this.formData.checkAdjValues[idx] || "",
          canRemove: this.formData.checkKeys.length > 1,
       }))
       const saveKeysMapped = this.formData.saveKeys.map((val, idx) => ({
          value: val,
          index: idx,
+         adjType: this.formData.saveAdjTypes[idx] || "",
+         adjValue: this.formData.saveAdjValues[idx] || "",
          canRemove: this.formData.saveKeys.length > 1,
       }))
       const damagePoolsMapped = this.formData.damagePools.map((val, idx) => ({
@@ -289,13 +290,53 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
                   const [, index, field] = name.split(".")
                   this.formData.damagePools[parseInt(index, 10)][field] = val
                } else if (name.startsWith("checkKeys.")) {
-                  const [, index] = name.split(".")
-                  this.formData.checkKeys[parseInt(index, 10)] = val
+                  this.formData.checkKeys[parseInt(name.split(".")[1], 10)] =
+                     val
+               } else if (name.startsWith("checkAdjTypes.")) {
+                  this.formData.checkAdjTypes[
+                     parseInt(name.split(".")[1], 10)
+                  ] = val
+               } else if (name.startsWith("checkAdjValues.")) {
+                  this.formData.checkAdjValues[
+                     parseInt(name.split(".")[1], 10)
+                  ] = val
                } else if (name.startsWith("saveKeys.")) {
-                  const [, index] = name.split(".")
-                  this.formData.saveKeys[parseInt(index, 10)] = val
+                  this.formData.saveKeys[parseInt(name.split(".")[1], 10)] = val
+               } else if (name.startsWith("saveAdjTypes.")) {
+                  this.formData.saveAdjTypes[parseInt(name.split(".")[1], 10)] =
+                     val
+               } else if (name.startsWith("saveAdjValues.")) {
+                  this.formData.saveAdjValues[
+                     parseInt(name.split(".")[1], 10)
+                  ] = val
                } else {
                   this.formData[name] = val
+               }
+
+               if (name.startsWith("checkAdjTypes.")) {
+                  const idx = name.split(".")[1]
+                  if (val !== "") {
+                     this.formData.checkAdjValues[idx] = ""
+                     html.find(`input[name="checkAdjValues.${idx}"]`).val("")
+                  }
+               } else if (name.startsWith("checkAdjValues.")) {
+                  const idx = name.split(".")[1]
+                  if (val !== "") {
+                     this.formData.checkAdjTypes[idx] = ""
+                     html.find(`select[name="checkAdjTypes.${idx}"]`).val("")
+                  }
+               } else if (name.startsWith("saveAdjTypes.")) {
+                  const idx = name.split(".")[1]
+                  if (val !== "") {
+                     this.formData.saveAdjValues[idx] = ""
+                     html.find(`input[name="saveAdjValues.${idx}"]`).val("")
+                  }
+               } else if (name.startsWith("saveAdjValues.")) {
+                  const idx = name.split(".")[1]
+                  if (val !== "") {
+                     this.formData.saveAdjTypes[idx] = ""
+                     html.find(`select[name="saveAdjTypes.${idx}"]`).val("")
+                  }
                }
 
                if (name === "conditionId") {
@@ -312,7 +353,33 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
 
                if (name === "type") {
                   this.formData.customLabel = ""
+                  this.formData.traits = ""
+                  this.formData.options = ""
+                  this.formData.chatCardName = ""
+                  this.formData.rollerRole = ""
                   html.find('input[name="customLabel"]').val("")
+                  html.find('input[name="traits"]').val("")
+                  html.find('input[name="options"]').val("")
+                  html.find('input[name="chatCardName"]').val("")
+                  html.find('select[name="rollerRole"]').val("")
+
+                  this.formData.isResolve = false
+                  this.formData.immutable = false
+                  this.formData.overrideTraits = false
+                  html.find('input[name="isResolve"]').prop("checked", false)
+                  html.find('input[name="immutable"]').prop("checked", false)
+                  html
+                     .find('input[name="overrideTraits"]')
+                     .prop("checked", false)
+
+                  this.formData.checkAdjTypes.fill("")
+                  this.formData.checkAdjValues.fill("")
+                  this.formData.saveAdjTypes.fill("")
+                  this.formData.saveAdjValues.fill("")
+                  html.find('select[name^="checkAdjTypes"]').val("")
+                  html.find('input[name^="checkAdjValues"]').val("")
+                  html.find('select[name^="saveAdjTypes"]').val("")
+                  html.find('input[name^="saveAdjValues"]').val("")
                }
 
                if (name === "actionSlug") {
@@ -340,7 +407,6 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
                   return
                }
 
-               this.#handleInterlock(form, "adjustment", "adjustmentType", name)
                this.#handleInterlock(form, "against", "againstType", name)
                this.#handleInterlock(form, "defense", "defenseType", name)
                this.#handleInterlock(
@@ -375,19 +441,29 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
 
    static onAddCheckKey(event, target) {
       this.formData.checkKeys.push("athletics")
+      this.formData.checkAdjTypes.push("")
+      this.formData.checkAdjValues.push("")
       this.render()
    }
    static onRemoveCheckKey(event, target) {
-      this.formData.checkKeys.splice(parseInt(target.dataset.index, 10), 1)
+      const idx = parseInt(target.dataset.index, 10)
+      this.formData.checkKeys.splice(idx, 1)
+      this.formData.checkAdjTypes.splice(idx, 1)
+      this.formData.checkAdjValues.splice(idx, 1)
       this.render()
    }
 
    static onAddSaveKey(event, target) {
       this.formData.saveKeys.push("fortitude")
+      this.formData.saveAdjTypes.push("")
+      this.formData.saveAdjValues.push("")
       this.render()
    }
    static onRemoveSaveKey(event, target) {
-      this.formData.saveKeys.splice(parseInt(target.dataset.index, 10), 1)
+      const idx = parseInt(target.dataset.index, 10)
+      this.formData.saveKeys.splice(idx, 1)
+      this.formData.saveAdjTypes.splice(idx, 1)
+      this.formData.saveAdjValues.splice(idx, 1)
       this.render()
    }
 

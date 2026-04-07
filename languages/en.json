@@ -53,7 +53,8 @@
          "Statistic": "Statistic",
          "AddSkill": "Add Skill",
          "AddSave": "Add Save",
-         "ConditionValue": "Condition value/level"
+         "ConditionValue": "Condition value/level",
+         "Adjustment": "Adjustment"
       },
       "Settings": {
          "AutoCopyOnInsert": {

@@ -32,7 +32,11 @@ export class PF2eInlineLogic {
 
    static #buildCheckSave(state) {
       const parts = []
-      const keys = state.type === "Save" ? state.saveKeys : state.checkKeys
+
+      const isSave = state.type === "Save"
+      const keys = isSave ? state.saveKeys : state.checkKeys
+      const adjTypes = isSave ? state.saveAdjTypes : state.checkAdjTypes
+      const adjValues = isSave ? state.saveAdjValues : state.checkAdjValues
 
       const mappedKeys = keys.map((k) => {
          if (k === "lore") {
@@ -48,7 +52,7 @@ export class PF2eInlineLogic {
       parts.push(mappedKeys.join(","))
 
       if (state.dcMode === "dc") {
-         let dcVal = state.isLevelDC ? "@self.level" : state.dc
+         let dcVal = state.isLevelDC ? "@self-level" : state.dc
          if (state.isResolve && !state.isLevelDC && dcVal)
             dcVal = `resolve(${dcVal})`
          if (dcVal) parts.push(`dc:${dcVal}`)
@@ -62,8 +66,17 @@ export class PF2eInlineLogic {
          )
       }
 
-      const adj = state.adjustmentType || state.adjustment
-      if (adj && adj !== "0") parts.push(`adjustment:${adj}`)
+      // Compile parallel adjustments array
+      const adjustments = keys.map((_, i) => {
+         const t = adjTypes[i]
+         const v = adjValues[i]
+         const finalAdj = t || v
+         return finalAdj && finalAdj !== "0" ? finalAdj : "0"
+      })
+
+      if (adjustments.some((a) => a !== "0")) {
+         parts.push(`adjustment:${adjustments.join(",")}`)
+      }
 
       if (state.basicSave && state.type === "Save") parts.push("basic")
       if (state.rollerRole) parts.push(`rollerRole:${state.rollerRole}`)
@@ -110,6 +123,13 @@ export class PF2eInlineLogic {
 
       if (!pools.length) return ""
 
+      const parts = [pools.join(",")]
+
+      const traits = state.traits
+         ? state.traits.split(",").map((t) => t.trim())
+         : []
+      if (traits.length) parts.push(`traits:${traits.join(",")}`)
+
       const opt = []
       if (state.materials) {
          opt.push(
@@ -119,10 +139,9 @@ export class PF2eInlineLogic {
          )
       }
       if (state.options) opt.push(state.options)
+      if (opt.length) parts.push(`options:${opt.join(",")}`)
 
-      return opt.length
-         ? `@Damage[${pools.join(",")}|options:${opt.join(",")}]`
-         : `@Damage[${pools.join(",")}]`
+      return `@Damage[${parts.join("|")}]`
    }
 
    static #buildTemplate(state) {
