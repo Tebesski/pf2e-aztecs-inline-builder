@@ -13,6 +13,7 @@
             <option value="Save" {{#if (eq type "Save")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.SavingThrow"}}</option>
             <option value="Flat" {{#if (eq type "Flat")}}selected{{/if}}>Flat Check</option>
             <option value="Damage" {{#if (eq type "Damage")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Damage"}}</option>
+            <option value="Healing" {{#if (eq type "Healing")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Healing"}}</option>
             <option value="Template" {{#if (eq type "Template")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Template"}}</option>
             <option value="Roll" {{#if (eq type "Roll")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Roll"}}</option>
             <option value="Action" {{#if (eq type "Action")}}selected{{/if}}>{{localize "PF2E-AZTECS.Labels.Action"}}</option>
@@ -201,8 +202,8 @@
             </details>
         </div>
 
-        {{!-- Damage Builder --}}
-        <div class="show-damage">
+        {{!-- Damage & Healing Builder --}}
+        <div class="show-damage show-healing">
             <hr>
             <div class="damage-builder-header"><span class="col-formula">Formula</span><span class="col-type">Type</span><span class="col-cat">Category</span></div>
             {{#each damagePoolsMapped}}

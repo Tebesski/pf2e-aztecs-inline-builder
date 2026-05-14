@@ -91,7 +91,10 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
       })
       this.skills.sort((a, b) => a.label.localeCompare(b.label))
 
-      this.damageTypes = CONFIG.PF2E.damageTypes
+      this.damageTypes = {
+         ...CONFIG.PF2E.damageTypes,
+         healing: "PF2E.TraitHealing",
+      }
 
       this.actions = Array.from(game.pf2e.actions.values())
          .map((a) => {
@@ -441,7 +444,11 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
                }
 
                if (name === "type") {
-                  Object.assign(this.formData, this.#getDefaultData())
+                  const baseData = this.#getDefaultData()
+                  if (val === "Healing") {
+                     baseData.damagePools[0].type = "healing"
+                  }
+                  Object.assign(this.formData, baseData)
                   this.formData.type = val
                   this.render()
                   return

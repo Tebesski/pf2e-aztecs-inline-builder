@@ -162,6 +162,7 @@
 .pf2e-inline-builder .show-check-save,
 .pf2e-inline-builder .show-check-save-flat,
 .pf2e-inline-builder .show-damage,
+.pf2e-inline-builder .show-healing,
 .pf2e-inline-builder .show-template,
 .pf2e-inline-builder .show-lore,
 .pf2e-inline-builder .show-dc,
@@ -197,6 +198,10 @@ form[data-type="Save"] .show-save-only {
 }
 
 form[data-type="Damage"] .show-damage {
+   display: block;
+}
+
+form[data-type="Healing"] .show-healing {
    display: block;
 }
 
@@ -266,4 +271,8 @@ form[data-shape="line"] .show-width-input {
 
 form[data-type="Save"] .form-group.show-save-only {
    display: flex;
+}
+
+.pf2e-aztecs-builder-container[data-type="Healing"] .show-healing {
+   display: block;
 }

@@ -16,6 +16,9 @@ export class PF2eInlineLogic {
          case "Damage":
             syntax = this.#buildDamage(state)
             break
+         case "Healing":
+            syntax = this.#buildDamage(state)
+            break
          case "Template":
             syntax = this.#buildTemplate(state)
             break

@@ -15,6 +15,7 @@
          "SkillCheck": "Skill Check",
          "SavingThrow": "Saving Throw",
          "Damage": "Damage",
+         "Healing": "Healing",
          "Template": "Template",
          "Roll": "Generic roll",
          "Action": "Actions",
