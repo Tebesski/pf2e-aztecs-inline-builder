@@ -218,16 +218,20 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
    async _prepareContext(options) {
       if (!this.conditions) {
          const pack = game.packs.get("pf2e.conditionitems")
-         const index = await pack.getIndex({ fields: ["img"] })
+         const index = await pack.getIndex({
+            fields: ["img", "system.value.isValued"],
+         })
          this.conditions = Array.from(index)
             .map((c) => ({
                id: c._id,
                name: c.name,
                img: c.img,
+               isValued: c.system?.value?.isValued ?? false,
             }))
             .sort((a, b) => a.name.localeCompare(b.name))
-         if (!this.formData.conditionId)
-            this.formData.conditionId = this.conditions[0]?.id
+      }
+      if (!this.formData.conditionId && this.conditions?.length) {
+         this.formData.conditionId = this.conditions[0].id
       }
 
       const selectedCondition = this.conditions.find(
@@ -317,6 +321,9 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
          currentVariants,
          conditions: this.conditions,
          selectedCondition,
+         conditionIsValued: selectedCondition
+            ? selectedCondition.isValued
+            : false,
          allStats: PF2eInlineBuilderUI.ALL_STATS,
          actionStatsOther: PF2eInlineBuilderUI.ACTION_STATS_OTHER,
          damageTypes: this.damageTypes,
@@ -437,9 +444,9 @@ export class PF2eInlineBuilderUI extends HandlebarsApplicationMixin(
                   )
                   if (selectedCondition) {
                      this.formData.conditionName = selectedCondition.name
-                     html
-                        .find(".show-condition img")
-                        .attr("src", selectedCondition.img)
+                     this.formData.conditionValue = ""
+                     this.render()
+                     return
                   }
                }
 

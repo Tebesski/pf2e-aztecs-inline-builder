@@ -282,7 +282,9 @@
                 {{#if selectedCondition}}<img src="{{selectedCondition.img}}" width="24" height="24" style="border:none; margin-right: 5px; border-radius: 3px;">{{/if}}
                 <select name="conditionId">{{#each conditions}}<option value="{{this.id}}" {{#if (eq ../conditionId this.id)}}selected{{/if}}>{{this.name}}</option>{{/each}}</select>
             </div>
+            {{#if conditionIsValued}}
             <div class="form-group"><label>Value</label><input type="number" name="conditionValue" value="{{conditionValue}}" placeholder="1"></div>
+            {{/if}}
         </div>
 
         {{!-- Common Footer Elements --}}
